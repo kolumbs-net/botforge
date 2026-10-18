@@ -38,3 +38,22 @@ dataclass in botforge's database.
 **Upstream (zoozl):** the email channel uses `message["to"]` as the talker, so
 every sender shares one identity. That needs fixing in zoozl before email can
 carry per-person admin.
+
+## Read the port as `WEBSOCKET_PORT`
+
+**Today:** `deploy/start` reads the websocket port from `PORT`, the single
+port infra-orchestrator's service slot provides.
+
+**Coming in infra-orchestrator** (its TODO "Standard ports for service slots"):
+a slot declares any number of named ports, each given to the service as
+`<NAME>_PORT`, and `PORT` goes away. botforge's one port will be named
+`websocket`, so it arrives as `WEBSOCKET_PORT`.
+
+**Plan:**
+
+1. **Before** the infra change: in `deploy/start`, use
+   `${WEBSOCKET_PORT:-$PORT}` for `websocket_port`. That works with today's slot
+   and with the new one, so botforge keeps running when infra restarts it with
+   the new variables.
+2. **After** the infra change is deployed: drop the fallback and use
+   `$WEBSOCKET_PORT` only, and update the comment at the top of `deploy/start`.

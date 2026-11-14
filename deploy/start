@@ -1,5 +1,5 @@
 #!/bin/bash
-# Run botforge. Started by systemd as the botforge account, with PORT,
+# Run botforge. Started by systemd as the botforge account, with WEBSOCKET_PORT (or PORT),
 # STATE_DIRECTORY and RUNTIME_DIRECTORY set by the service slot
 # (infra-orchestrator); everything else is botforge's own.
 set -euo pipefail
@@ -10,7 +10,7 @@ umask 077
 config="$RUNTIME_DIRECTORY/bot.toml"
 cat > "$config" <<TOML
 extensions = ["botforge.plugin"]
-websocket_port = $PORT
+websocket_port = ${WEBSOCKET_PORT:-$PORT}
 # zoozl's routing memory and botforge's own data share one file.
 memory_path = "sqlite:///$STATE_DIRECTORY/botforge.db"
 
